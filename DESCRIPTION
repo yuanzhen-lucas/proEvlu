@@ -1,0 +1,27 @@
+Package: proEvlu
+Type: Package
+Title: Quickly obtain protein and genetic information from conserved regions of 
+    a given protein family from a given species
+Version: 0.1.0
+Author@R: person("Yuan","Zhen",,"yuanzhenlucas@163.com",role = c("aut", "cre"))
+Description:This pipeline allows you to quickly find the gene family of interest to you. 
+    Find information about relevant protein sequences and gene sequences from NCBI
+    (National Center for Biotechnology Information). 
+    It also provides physicochemical properties and evolutionary analysis of proteins 
+    and the localization of genes on chromosomes. 
+    Also provides input with other packages for further analysis of your interest.
+License: MIT + file LICENSE
+Imports: 
+    rentrez,
+    tidyverse,
+    Biostrings,
+    ggrepel,
+    protr,
+    msa,
+    ape
+Depends:
+    R
+URL:
+BugReports:
+Encoding: UTF-8
+LazyData: true
