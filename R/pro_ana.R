@@ -1,13 +1,15 @@
 
 #' Turn NCBI obtained information into DNAString or AAString objects
 #'
-#' @param seq
-#' @param type
+#' @param seq sequence information obtained from NCBI
+#' @param type Select the type you need to deal with.("dna" or "pro")
 #'
 #' @return
 #' @export
 #'
 #' @examples
+#'
+#'
 str2_sting=function(seq,type="dna"){
   prot_seq=str_split(seq,"\n")[[1]]
   prot_seq=prot_seq[!str_count(prot_seq)==0]
@@ -28,24 +30,26 @@ str2_sting=function(seq,type="dna"){
 
   if(type=="dna"){
     DNAStringSet(str_q)
+  }else if(type=="pro"){
+    AAStringSet(str_q)
   }else{
-
+    stop("please use the correct type:\"dna\" or \"pro\" ")
   }
-  AAStringSet(str_q)
+
 
 }
 
 
 
-#' Title
+#' Obtain sequence information for proteins
 #'
-#' @param protein_df
+#' @param protein_df a data frame from function \code{\link{get_protein}} output
 #'
 #' @return
 #' @export
 #'
 #' @examples
-protein_seq <- function(protein_df=test){
+protein_seq <- function(protein_df){
   protein_cap=protein_df$caption
   pro_aa_seq=Biostrings::AAStringSet()
   if(length(protein_cap) < 10 ){
@@ -70,48 +74,26 @@ protein_seq <- function(protein_df=test){
 }
 
 
-pro_seq=protein_seq()
 
 
 
-
-#' Title
+#' Information on the physicochemical properties of proteins is obtained
 #'
-#' @param pro_seq
+#' @param pro_seq a AAStringset from function \code{\link{protein_seq}} output
 #'
 #' @return
 #' @export
 #'
+#'
 #' @examples
+#'
 protein_properties <- function(pro_seq){
-  data.frame(aminoacid_length=lapply(pro_seq,function(x)Peptides::lengthpep(x)) %>%unlist(),
-             isoelectic_point=lapply(pro_seq,function(x)Peptides::pI(x)) %>%unlist(),
-             molecular_weight_kDa=lapply(pro_seq,function(x)Peptides::mw(x)) %>%unlist() / 1000,
-             theoretical_net_charge=lapply(pro_seq,function(x)Peptides::charge(x)) %>%unlist(),
-             hydrophobicity_index=lapply(pro_seq,function(x)Peptides::hydrophobicity(x)) %>%unlist(),
-             instability_index=lapply(pro_seq,function(x)Peptides::instaIndex(x)) %>%unlist()
+  data.frame(aminoacid_length=lapply(pro_seq,function(x)lengthpep(x)) %>%unlist(),
+             isoelectic_point=lapply(pro_seq,function(x)pI(x)) %>%unlist(),
+             molecular_weight_kDa=lapply(pro_seq,function(x)mw(x)) %>%unlist() / 1000,
+             theoretical_net_charge=lapply(pro_seq,function(x)charge(x)) %>%unlist(),
+             hydrophobicity_index=lapply(pro_seq,function(x)hydrophobicity(x)) %>%unlist(),
+             instability_index=lapply(pro_seq,function(x)instaIndex(x)) %>%unlist()
   )
 }
 
-
-#' Title
-#'
-#' @param pro_seq
-#' @param plot
-#'
-#' @return
-#' @export
-#'
-#' @examples
-pro_tree = function(pro_seq,plot=FALSE){
-
-  pro_ali=msa(pro_seq)
-  sdist <- stringDist(as(pro_ali, "BStringSet"), method="hamming")
-  clust <- hclust(sdist, method = "single")
-
-  if(!plot){
-    plot(clust)
-  }
-
-
-}

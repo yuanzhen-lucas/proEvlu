@@ -4,8 +4,8 @@
 
 #' Protein families are obtained from NCBI by PFM number and taxonomy ID
 #'
-#' @param pfm
-#' @param taxonomyID
+#' @param pfm pfm ID
+#' @param taxonomyID taxonomy ID
 #'
 #' @return A data frame with protein accession ids ,descriptions,
 #' sourcedb,taxonomy ID and organism
@@ -30,7 +30,6 @@
 #'
 #' @seealso \code{\link{get_taxonomy}} which can be used to get taxonomy ID
 #'
-#' @importFrom rentrez tidyverse
 #'
 #' @author Zhen Yuan
 #'

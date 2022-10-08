@@ -14,7 +14,7 @@
 #'
 #'
 #'
-#'  @author Zhen Yuan
+#' @author Yuan Zhen
 #'
 gene_sturcture = function(protein_df,taxonomyID){
   id_ref=entrez_link(dbfrom="taxonomy", id=taxonomyID, db="genome")
