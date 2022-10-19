@@ -23,17 +23,35 @@ gene_sturcture = function(protein_df,taxonomyID){
 
   id_link_ref_gen=entrez_link(dbfrom = "genome",db="nucleotide",id=genome_info$uid)
 
-  idd_nuccc=entrez_summary(db="nucleotide",id=id_link_ref_gen$links$genome_nuccore)
+  id_link_ref_gen=entrez_link(dbfrom = "genome",db="nucleotide",id=genome_info$uid)
 
-  ttyz=lapply(1:length(idd_nuccc),function(a){
+  idd_test=list()
+  if(length(id_link_ref_gen$links$genome_nuccore) < 10 ){
 
-    x=idd_nuccc[[a]]
+    web_load <- entrez_post(db="nucleotide", id=id_link_ref_gen$links$genome_nuccores)
+    idd_nuccc=entrez_summary(db="nucleotide",web_history = web_load)
+
+    idd_test=c(idd_test,idd_nuccc)
+
+  } else {
+    gene_caps = suppressWarnings(split(sample(id_link_ref_gen$links$genome_nuccore,replace = FALSE),1:(length(id_link_ref_gen$links$genome_nuccore) %/% 10)))
+    for(i in seq(length(gene_caps))) {
+      web_load <- entrez_post(db="nucleotide", id=gene_caps[[i]])
+      idd_nuccc=entrez_summary(db="nucleotide",web_history = web_load)
+
+      idd_test=c(idd_test,idd_nuccc)
+
+    }
+  }
+
+  ttyz=lapply(1:length(idd_test),function(a){
+    x=idd_test[[a]]
     if(x$sourcedb=="refseq" && x$genome=="chromosome"){
       chr_pos=which(str_detect(str_split(x$subtype,"[ | ]")[[1]],"chromosome"))
       chr_length=max(x$statistics$count[(which(x$statistics$type=="Length"))])
       data.frame(caption=x$caption,title=x$title,gi=x$gi,
                  length=chr_length,
-                 chr=str_split(x$subname,"[ | ]")[[1]][chr_pos])
+                 chr=str_split(x$subname,"[|]")[[1]][chr_pos])
     }
 
   })

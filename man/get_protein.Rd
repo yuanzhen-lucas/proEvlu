@@ -4,10 +4,10 @@
 \alias{get_protein}
 \title{Protein families are obtained from NCBI by PFM number and taxonomy ID}
 \usage{
-get_protein(pfm = "PF02701", taxonomyID = "3983")
+get_protein(pfam, taxonomyID)
 }
 \arguments{
-\item{pfm}{pfm ID}
+\item{pfam}{pfm ID}
 
 \item{taxonomyID}{taxonomy ID}
 }
@@ -28,7 +28,7 @@ taxonomy_id=get_taxonomy(organism_name="soybean")
 
 ###Please note that you may have multiple outputs for these two results, so choose the one that suits you best.
 
-protein_info=get_protein(pfm=my_pfm,taxonomyID=taxonomy_id)
+protein_info=get_protein(pfam=my_pfm,taxonomyID=taxonomy_id)
 
 }
 

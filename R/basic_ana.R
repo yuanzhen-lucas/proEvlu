@@ -4,7 +4,7 @@
 
 #' Protein families are obtained from NCBI by PFM number and taxonomy ID
 #'
-#' @param pfm pfm ID
+#' @param pfam pfm ID
 #' @param taxonomyID taxonomy ID
 #'
 #' @return A data frame with protein accession ids ,descriptions,
@@ -21,7 +21,7 @@
 #'
 #'###Please note that you may have multiple outputs for these two results, so choose the one that suits you best.
 #'
-#' protein_info=get_protein(pfm=my_pfm,taxonomyID=taxonomy_id)
+#' protein_info=get_protein(pfam=my_pfm,taxonomyID=taxonomy_id)
 #'
 #' }
 #'
@@ -33,18 +33,20 @@
 #'
 #' @author Zhen Yuan
 #'
-get_protein=function(pfm="PF02701",taxonomyID="3983"){
+get_protein=function(pfam,taxonomyID){
   id_ref=entrez_link(dbfrom="taxonomy", id=taxonomyID, db="genome")
   if(is.null(id_ref$links$taxonomy_genome)){
     stop("Since the genome of the species you submitted could not be found in NCBI,
          we are sorry not to be able to perform a quick analysis for you")
   }
 
-  id_cdd=entrez_search(db="cdd", term =paste0(pfm,"[all]"))
-  id=entrez_link(dbfrom="cdd", id=id_cdd$ids, db="protein")
+
+  id=entrez_link(dbfrom="cdd", id=pfam, db="protein")
   protein_ids=id$links$cdd_protein
   extract_name=c()
-
+  if(is.null(protein_ids)){
+    stop("Sorry, your entry was not retrieved in NCBI.")
+  }
   if(length(protein_ids) < 300 ){
     web_load <- entrez_post(db="protein", id=protein_ids)
     protein_summary = entrez_summary(db="protein", web_history=web_load)

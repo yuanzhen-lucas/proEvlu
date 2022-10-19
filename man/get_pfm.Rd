@@ -4,13 +4,15 @@
 \alias{get_pfm}
 \title{Get the pfm ID from the gene family name you gave}
 \usage{
-get_pfm(protein_familyname)
+get_pfm(protein_familyname, show_taxonomy = "no")
 }
 \arguments{
 \item{protein_familyname}{The name of the gene family}
+
+\item{show_taxonomy}{yes or no,show the taxonomy name or not ,defult is no}
 }
 \value{
-pfm IDs
+a data frame of pfm IDs
 }
 \description{
 Get the pfm ID from the gene family name you gave

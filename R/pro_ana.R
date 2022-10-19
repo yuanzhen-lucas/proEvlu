@@ -55,7 +55,7 @@ protein_seq <- function(protein_df){
   if(length(protein_cap) < 10 ){
     web_load <- entrez_post(db="protein", id=protein_cap)
 
-    pro_aa_seq=entrez_fetch(db="protein",web_history=web_load,rettype="fasta")
+    pro_aa_seq=entrez_fetch(db="protein",web_history=web_load,rettype="fasta") %>% str2_sting(type="pro")
 
 
   } else {

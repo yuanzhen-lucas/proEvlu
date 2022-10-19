@@ -10,7 +10,7 @@ get_taxonomy(organism_name)
 \item{organism_name}{}
 }
 \value{
-taxonomy IDs
+a data frame taxonomy IDs
 }
 \description{
 Get the taxonomy ID from the species name you gave

@@ -3,11 +3,14 @@
 #' Get the pfm ID from the gene family name you gave
 #'
 #' @param protein_familyname The name of the gene family
+#' @param show_taxonomy yes or no,show the taxonomy name or not ,defult is no
+#' @return a data frame of pfm IDs
 #'
-#' @return pfm IDs
 #' @export
 #'
 #' @examples
+#'
+#'
 #'
 #'
 #'
@@ -17,9 +20,13 @@
 #' @author Zhen Yuan
 #'
 #'
-get_pfm=function(protein_familyname){
+get_pfm=function(protein_familyname,show_taxonomy="no"){
 
   my_pfm=entrez_search(db="cdd", term =paste0(protein_familyname,"[all]"))
+
+  if(is_empty(my_pfm$ids)){
+    stop("Please confirm that the transcription factor family you entered is correct")
+  }
   my_sum=entrez_summary(db="cdd",id=my_pfm$ids)
 
   extract_name = as.character((extract_from_esummary(my_sum,c("uid","accession","title","subtitle","abstract","database"))))
@@ -29,15 +36,26 @@ get_pfm=function(protein_familyname){
                       row.names = colnames(extract_name),
                       stringsAsFactors = F)
 
-  colnames(pfm_df) = c("cdd_id","accession","title","subtitle","abstract","database")
+  colnames(pfm_df) = c("cdd_id","pfam_id","title","subtitle","abstract","database")
 
-  tax_id=entrez_link(dbfrom = "cdd",db="taxonomy",id=pfm_df$cdd_id)
+  if(show_taxonomy=="yes"){
+    tax_id=entrez_link(dbfrom = "cdd",db="taxonomy",id=pfm_df$cdd_id)
 
-  tax_summ=entrez_summary(db="taxonomy",id=tax_id$links$cdd_taxonomy)
+    tax_summ=entrez_summary(db="taxonomy",id=tax_id$links$cdd_taxonomy)
 
-  pfm_df$taxonomy_id=lapply(tax_summ,function(x)x$uid) %>% unlist
-  pfm_df$division=lapply(tax_summ,function(x)x$division) %>% unlist
-  pfm_df$scientificname=lapply(tax_summ,function(x)x$scientificname) %>% unlist
+    if(length(tax_id$links$cdd_taxonomy)==1){
+
+      pfm_df$division=tax_summ$division
+      pfm_df$scientificname=tax_summ$scientificname
+    }else if(length(tax_id$links$cdd_taxonomy)==1){
+      stop("I can't find the species information I want to match")
+    }else{
+      pfm_df$division=lapply(tax_summ,function(x)x$division) %>% unlist
+      pfm_df$scientificname=lapply(tax_summ,function(x)x$scientificname) %>% unlist
+    }
+
+  }
+
   pfm_df
 }
 
@@ -50,7 +68,7 @@ get_pfm=function(protein_familyname){
 #'
 #' @param organism_name
 #'
-#' @return taxonomy IDs
+#' @return a data frame taxonomy IDs
 #'
 #'
 #' @export
@@ -64,6 +82,11 @@ get_pfm=function(protein_familyname){
 #'
 get_taxonomy=function(organism_name){
   my_taxonomy=entrez_search(db="taxonomy", term =paste0(organism_name,"[ORGN]"),retmax=60)
+
+  if(is_empty(my_taxonomy$ids)){
+    stop("Please check that your species name is entered correctly")
+  }
+
   my_taxonomy_id=entrez_summary(db="taxonomy",id=my_taxonomy$ids)
 
 
